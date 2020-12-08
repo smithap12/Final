@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8 />
+	<title>Gold found in NC</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+
+	<style>
+	html, body, #map { width: 100%; height: 100%; margin: 0; background: #fff; }
+	.legend {
+			line-height: 40px;
+			font-size: 16px;
+			width: 190px;
+			color: #333333;
+			padding: 6px 8px;
+			background: white;
+			background: rgba(255,255,255,0.5);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+			font-family: 'Titillium Web', sans-serif;
+	}
+
+	.legend i {
+			width: 20px;
+			height: 20px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.9;
+	}
+
+	.legend img {
+			width: 16px;
+			height: 16px;
+			margin-right: 3px;
+			float: left;
+	}
+
+	.legend p {
+			font-size: 14px;
+			line-height: 20px;
+			margin: 0;
+	}
+		h1 {
+			position: absolute;
+			margin-top: 0;
+			top: 10px;
+			left: 45px;
+			font-size: 2em;
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+			padding: 10px 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		h2 {
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+		}
+
+		#map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+
+		section {
+			position: absolute;
+			bottom: 0;
+			left: 10px;
+			width: 280px;
+			margin: 20px auto;
+			padding: 0 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		p {
+			font-size: .9em;
+			line-height: 1.5em;
+		}
+
+		a {
+			color: #005daa;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+		.legend {
+				line-height: 40px;
+				font-size: 16px;
+				width: 190px;
+				color: #333333;
+				padding: 6px 8px;
+				background: white;
+				background: rgba(255,255,255,0.5);
+				box-shadow: 0 0 15px rgba(0,0,0,0.2);
+				border-radius: 5px;
+				font-family: 'Titillium Web', sans-serif;
+		}
+
+	</style>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/1.3.4/chroma.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+</head>
+
+<body>
+
+	<h1>Gold found in North Carolina
+			<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Flag_of_North_Carolina.svg/300px-Flag_of_North_Carolina.svg.png" alt="Flag of New Mexico.svg" width="45" height="30">
+	 </h1>
+
+	<div id='map'></div>
+
+	<section>
+		<h2>The History of Gold in NC</h2>
+
+		<p>Gold was first discovered in North Carolina in 1799 by a 12-year-old boy in Mecklenburg County. Many people don't know that NC was the highest gold producing state from that point until the California gold rush of 1849. Displayed here are the locations of prominent mines and creeks where gold was discovered in NC. </p>
+
+
+	</section>
+
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+	<script>
+
+	var mymap = L.map('map', {
+center: [35.454649,-81.530421],
+zoom: 8,
+maxZoom: 12,
+minZoom: 7,
+detectRetina: true
+});
+
+L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(mymap);
+
+var colors = chroma.scale('Paired').mode('lch').colors(1);
+gold_areas = L.geoJson.ajax("assets/gold.geojson", {
+	attribution: 'Basemap from <a href="https://carto.com/help/building-maps/basemap-list/">Carto.com</a>, Locations from <a href="https://deq.nc.gov/about/divisions/energy-mineral-land-resources/north-carolina-geological-survey/geoscience-education/gold-of-nc">NCDEQ</a>, Map by Alex Smith',
+	onEachFeature: function (feature, layer) {
+		layer.bindPopup(feature.properties.name);
+	},
+		pointToLayer: function (feature, x){
+return L.circleMarker(x, {
+color: '#ECCC02',
+opacity: .7,
+weight: 1,
+fillColor: '#ECCC02',
+fillOpacity: .7,
+radius: 10
+}) }});
+
+gold_areas.addTo(mymap)
+
+var legend = L.control({position: 'topright'});
+legend.onAdd = function () {
+  var div = L.DomUtil.create('div', 'legend');
+	  div.innerHTML += '<b>Legend</b><br />';
+	div.innerHTML += '<p>1 dot = area where gold has been found</p>';
+	  return div;
+};
+legend.addTo(mymap);
+	</script>
+
+</body>
+
+</html>
